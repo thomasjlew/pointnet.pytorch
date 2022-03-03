@@ -25,6 +25,13 @@ python train_classification.py --dataset ../shapenetcore_partanno_segmentation_b
 # python train_classification.py --dataset <dataset path> --nepoch=<number epochs> --dataset_type <modelnet40 | shapenet>
 # python train_segmentation.py --dataset <dataset path> --nepoch=<number epochs> 
 ```
+
+(optional) To save files after training
+```
+cd scripts
+bash copy_files_after_training.sh
+```
+
 Testing
 ```
 python show_cls.py --dataset ../shapenetcore_partanno_segmentation_benchmark_v0 --model ./cls/cls_model_18.pth
