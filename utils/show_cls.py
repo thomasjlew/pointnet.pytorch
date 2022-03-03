@@ -8,6 +8,13 @@ from pointnet.dataset import ShapeNetDataset
 from pointnet.model import PointNetCls
 import torch.nn.functional as F
 
+def parse_boolean(value):
+    value = value.lower()
+    if value in ["True", "true", "yes", "y", "1"]:
+        return True
+    else:
+        return False
+
 
 #showpoints(np.random.randn(2500,3), c1 = np.random.uniform(0,1,size = (2500)))
 
@@ -16,6 +23,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default = '',  help='model path')
 parser.add_argument('--num_points', type=int, default=2500, help='input batch size')
 parser.add_argument('--dataset', type=str, required=True, help="dataset path")
+parser.add_argument('--gpu', type=parse_boolean, default="True", help='flag for use gpu')
 
 
 opt = parser.parse_args()
@@ -32,8 +40,13 @@ testdataloader = torch.utils.data.DataLoader(
     test_dataset, batch_size=32, shuffle=True)
 
 classifier = PointNetCls(k=len(test_dataset.classes))
-classifier.cuda()
-classifier.load_state_dict(torch.load(opt.model))
+if opt.gpu:
+    classifier.cuda()
+    classifier.load_state_dict(torch.load(opt.model))
+else:
+    classifier.cpu()
+    classifier.load_state_dict(torch.load(opt.model,
+                        map_location=torch.device('cpu')))
 classifier.eval()
 
 
@@ -41,7 +54,10 @@ for i, data in enumerate(testdataloader, 0):
     points, target = data
     points, target = Variable(points), Variable(target[:, 0])
     points = points.transpose(2, 1)
-    points, target = points.cuda(), target.cuda()
+    if opt.gpu:
+        points, target = points.cuda(), target.cuda()
+    else:
+        points, target = points.cpu(), target.cpu()
     pred, _, _ = classifier(points)
     loss = F.nll_loss(pred, target)
 
