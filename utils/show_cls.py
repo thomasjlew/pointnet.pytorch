@@ -15,13 +15,14 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--model', type=str, default = '',  help='model path')
 parser.add_argument('--num_points', type=int, default=2500, help='input batch size')
+parser.add_argument('--dataset', type=str, required=True, help="dataset path")
 
 
 opt = parser.parse_args()
 print(opt)
 
 test_dataset = ShapeNetDataset(
-    root='shapenetcore_partanno_segmentation_benchmark_v0',
+    root=opt.dataset,
     split='test',
     classification=True,
     npoints=opt.num_points,

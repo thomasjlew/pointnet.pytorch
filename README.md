@@ -6,14 +6,14 @@ It is tested with pytorch-1.0.
 # Download data and running
 
 ```
-git clone https://github.com/fxia22/pointnet.pytorch
-cd pointnet.pytorch
-pip install -e .
+# git clone https://github.com/fxia22/pointnet.pytorch
+# cd pointnet.pytorch
+# pip install -e .
 ```
 
 Download and build visualization tool
 ```
-cd script
+cd scripts
 bash build.sh #build C++ code for visualization
 bash download.sh #download dataset
 ```
@@ -21,8 +21,13 @@ bash download.sh #download dataset
 Training 
 ```
 cd utils
-python train_classification.py --dataset <dataset path> --nepoch=<number epochs> --dataset_type <modelnet40 | shapenet>
-python train_segmentation.py --dataset <dataset path> --nepoch=<number epochs> 
+python train_classification.py --dataset ../shapenetcore_partanno_segmentation_benchmark_v0 --nepoch=2 --dataset_type shapenet
+# python train_classification.py --dataset <dataset path> --nepoch=<number epochs> --dataset_type <modelnet40 | shapenet>
+# python train_segmentation.py --dataset <dataset path> --nepoch=<number epochs> 
+```
+Testing
+```
+python show_cls.py --dataset ../shapenetcore_partanno_segmentation_benchmark_v0 --model ./cls/cls_model_18.pth
 ```
 
 Use `--feature_transform` to use feature transform.
