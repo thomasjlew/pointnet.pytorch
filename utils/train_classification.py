@@ -100,7 +100,7 @@ num_batch = len(dataset) / opt.batchSize
 for epoch in range(opt.nepoch):
     scheduler.step()
     for i, data in enumerate(dataloader, 0):
-        points, target = data
+        points, target, _ = data
         target = target[:, 0]
         points = points.transpose(2, 1)
         points, target = points.cuda(), target.cuda()
@@ -118,7 +118,7 @@ for epoch in range(opt.nepoch):
 
         if i % 10 == 0:
             j, data = next(enumerate(testdataloader, 0))
-            points, target = data
+            points, target, _ = data
             target = target[:, 0]
             points = points.transpose(2, 1)
             points, target = points.cuda(), target.cuda()
@@ -134,7 +134,7 @@ for epoch in range(opt.nepoch):
 total_correct = 0
 total_testset = 0
 for i,data in tqdm(enumerate(testdataloader, 0)):
-    points, target = data
+    points, target, _ = data
     target = target[:, 0]
     points = points.transpose(2, 1)
     points, target = points.cuda(), target.cuda()

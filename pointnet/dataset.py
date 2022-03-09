@@ -93,13 +93,15 @@ class ShapeNetDataset(data.Dataset):
         for file in filelist:
             _, category, uuid = file.split('/')
             if category in self.cat.values():
-                self.meta[self.id2cat[category]].append((os.path.join(self.root, category, 'points', uuid+'.pts'),
-                                        os.path.join(self.root, category, 'points_label', uuid+'.seg')))
+                self.meta[self.id2cat[category]].append((
+                                        os.path.join(self.root, category, 'points', uuid+'.pts'),
+                                        os.path.join(self.root, category, 'points_label', uuid+'.seg'),
+                                        os.path.join(self.root, category, 'seg_img', uuid+'.png')))
 
         self.datapath = []
         for item in self.cat:
             for fn in self.meta[item]:
-                self.datapath.append((item, fn[0], fn[1]))
+                self.datapath.append((item, fn[0], fn[1], fn[2]))
 
         self.classes = dict(zip(self.cat, range(len(self.cat))))
         print("[ShapeNetDataset::__init__]: self.classes=", self.classes)
@@ -114,6 +116,7 @@ class ShapeNetDataset(data.Dataset):
         cls = self.classes[self.datapath[index][0]]
         point_set = np.loadtxt(fn[1]).astype(np.float32)
         seg = np.loadtxt(fn[2]).astype(np.int64)
+        img_fn = fn[3]
         #print(point_set.shape, seg.shape)
 
         choice = np.random.choice(len(seg), self.npoints, replace=True)
@@ -136,9 +139,9 @@ class ShapeNetDataset(data.Dataset):
         cls = torch.from_numpy(np.array([cls]).astype(np.int64))
 
         if self.classification:
-            return point_set, cls
+            return point_set, cls, img_fn
         else:
-            return point_set, seg
+            return point_set, seg, img_fn
 
     def __len__(self):
         return len(self.datapath)
